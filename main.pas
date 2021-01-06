@@ -10,7 +10,8 @@ Var Info : TSearchRec;
     TrackedFile : Int64;
     FileId : Longint;
     RandomFileName : string;
-    OutputFile : Array[0..5000] of byte;
+    OutputFile : Array of byte;
+    f : file of byte;
 
 Begin
   Count:=0;
@@ -26,7 +27,7 @@ Begin
           If (TrackedFile > 2) then
           begin
             FilesArr[ArrCount] := Name;
-            Inc(ArrCount)
+            Inc(ArrCount);
           end
         end;
     Until FindNext(info)<>0;
@@ -42,6 +43,13 @@ Begin
     RandomFileName := FilesArr[FileId];
     Inc(Count);
     writeln(RandomFileName);
+    assign(f, RandomFileName);
+    Reset(f);
+    Repeat
+      Read(f,OutputFile);
+      Write(OutputFile);
+    Until Eof(f);
+    Close(f)
   Until (Count > 9)
   end
 End.
