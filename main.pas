@@ -10,8 +10,9 @@ Var Info : TSearchRec;
     TrackedFile : Int64;
     FileId : Longint;
     RandomFileName : string;
-    OutputFile : Array of byte;
+    OutputFile : file of byte;
     f : file of byte;
+    fContent: byte;
 
 Begin
   Count:=0;
@@ -35,21 +36,27 @@ Begin
   FindClose(Info);
   
   Count:=0;
+  assign(OutputFile, 'output.wav');
   randomize;
 
   begin
   Repeat
     FileId := random(ArrCount);
     RandomFileName := FilesArr[FileId];
+    RandomFileName := ExpandFileName(IncludeTrailingPathDelimiter(ExtractFileDir(ParamStr(0))) + './sounds' + RandomFileName);
     Inc(Count);
     writeln(RandomFileName);
     assign(f, RandomFileName);
     Reset(f);
     Repeat
-      Read(f,OutputFile);
-      Write(OutputFile);
-    Until Eof(f);
-    Close(f)
-  Until (Count > 9)
-  end
+      begin
+        read(f, fContent);
+        write(OutputFile, fContent)
+      end
+    Until (eof(f));
+    Close(f);
+  Until (Count > 9);
+  end;
+
+  Close(OutputFile);
 End.
